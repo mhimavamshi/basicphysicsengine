@@ -94,3 +94,22 @@ class Circle(PhysicsObject):
         # self.bound_calc_cache = [greater_x_out, greater_y_out, lesser_x_out, lesser_y_out]
         # return any(self.bound_calc_cache)
         return self.position.x >= bounds[0] - self.radius or self.position.y >= bounds[1] - self.radius or self.position.x <= self.radius or self.position.y <= self.radius 
+
+
+class Rectangle(PhysicsObject):
+    def __init__(self, position: Vector, mass: float, dimensions: tuple, color: str, force: Vector = Vector(0, 0)):
+        super().__init__(position, mass, force)
+        self.name = "Rectangle"
+        self.width = dimensions[0]
+        self.height = dimensions[1]
+        self.position = position
+        self.pygame_rect = pygame.Rect(self.position.x, self.position.y, self.width, self.height)
+        self.color = color
+
+    def draw(self, screen: pygame.Surface):
+        self.pygame_rect.x = self.position.x 
+        self.pygame_rect.y = self.position.y
+        pygame.draw.rect(screen, self.color, self.pygame_rect)
+
+    def is_out_of_bounds(self, bounds: tuple) -> bool:
+        return self.position.x >= bounds[0] - self.width or self.position.y >= bounds[1] - self.height or self.position.x <= 0 or self.position.y <= 0
