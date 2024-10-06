@@ -1,68 +1,38 @@
-from abc import ABC, abstractmethod
-import random
+from src.objects import *
 import pygame
 
 class PhysicsEngine:
-    def __init__(self, *kwargs):
-        self.objects = []
+    def __init__(self, **kwargs):
+        self.objects: list[PhysicsObject] = []
+        self.should_log = True
+        self.id_counter = 0
+        self.x_limit = kwargs['x_limit']
+        self.y_limit = kwargs['y_limit']
+        self.world_bounds = (self.x_limit, self.y_limit) 
 
-    def register(self, object):
+    def register(self, object: PhysicsObject) -> None:
+        object.id = self.id_counter
         self.objects.append(object)
-    
-    def run(self, delta_time):
+        self.id_counter += 1
+
+    def log(self, string, logtype="[INFO]"):
+        if self.should_log: print(logtype, string)
+
+    def out_of_bounds(self, object):
+        return object.position.x >= self.x_limit or object.position.y >= self.y_limit or object.position.x <= 0 or object.position.y <= 0 
+
+    def run(self, delta_time: float) -> None:
         for object in self.objects:
             object.update(delta_time)
             # TODO: handle collisions etc
+            if self.out_of_bounds(object):
+                # reverse_force = object.acceleration.scale(-1).scale(object.mass * 3)
+                # object.apply_force(reverse_force)
+                self.log(str(object)+" collided with wall")
+                object.reverse_direction()
+                # print("forces on the object:", [str(force) for force in object.forces])
 
-    def draw_objects(self, screen):
+
+    def draw_objects(self, screen: pygame.Surface) -> None:
         for object in self.objects:
             object.draw(screen)
-    
-class Vector:
-    def __init__(self, x, y):
-        self.x, self.y = x, y
-        self.direction = (self.x, self.y)
-    
-    def __add__(self, vector):
-        return Vector(vector.x + self.x, vector.y + self.y)
-    
-    def __sub__(self, vector):
-        return Vector(vector.x - self.x, vector.y - self.y)
-    
-    def scale(self, value):
-        return Vector(self.x * value, self.y * value)
-
-    def to_pygamevec(self):
-        return pygame.Vector2(self.x, self.y)
-
-class RandomVector(Vector):
-    def __init__(self, x_bounds, y_bounds):
-        super().__init__(random.uniform(*x_bounds), random.uniform(*y_bounds))
-
-    
-
-# refactor later
-class PhysicsObject:
-    def __init__(self, position):
-        self.position = position
-
-    @abstractmethod
-    def update(self, delta_time):
-        pass
-
-class Circle(PhysicsObject):
-    def __init__(self, position, radius, color="black"):
-        super().__init__(position)
-        self.radius = radius
-        self.color = color
-        self.velocity = None
-
-    def add_velocity(self, velocity):
-        self.velocity = velocity
-    
-    def update(self, delta_time):
-        if self.velocity:
-            self.position += self.velocity.scale(delta_time)    
-
-    def draw(self, screen):
-        pygame.draw.circle(screen, self.color, self.position.to_pygamevec(), self.radius)
