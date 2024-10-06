@@ -25,12 +25,14 @@ class PhysicsEngine:
         for object in self.objects:
             object.update(delta_time)
             # TODO: handle collisions etc
-            if self.out_of_bounds(object):
-                # reverse_force = object.acceleration.scale(-1).scale(object.mass * 3)
-                # object.apply_force(reverse_force)
+
+            # collision with the "walls"
+            if object.is_out_of_bounds(self.world_bounds):
                 self.log(str(object)+" collided with wall")
+                # object.correct_bounds()
                 object.reverse_direction()
-                # print("forces on the object:", [str(force) for force in object.forces])
+
+            
 
 
     def draw_objects(self, screen: pygame.Surface) -> None:
