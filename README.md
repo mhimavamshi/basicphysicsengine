@@ -4,5 +4,6 @@ a basic 2D physics engine, made for educational purposes.
 
 ## Usage
 ```
-$ python demo.py
+$ cd demos
+$ python circles.py
 ```
