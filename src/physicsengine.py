@@ -28,7 +28,7 @@ class PhysicsEngine:
 
             # collision with the "walls"
             if object.is_out_of_bounds(self.world_bounds):
-                self.log(str(object)+" collided with wall")
+                self.log(str(object)+" collided with wall at "+str(object.position))
                 # object.correct_bounds()
                 object.reverse_direction()
 

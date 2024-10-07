@@ -112,4 +112,4 @@ class Rectangle(PhysicsObject):
         pygame.draw.rect(screen, self.color, self.pygame_rect)
 
     def is_out_of_bounds(self, bounds: tuple) -> bool:
-        return self.position.x >= bounds[0] - self.width or self.position.y >= bounds[1] - self.height or self.position.x <= 0 or self.position.y <= 0
+        return self.position.x < 0 or self.position.y < 0 or self.position.x + self.width > bounds[0] or self.position.y + self.height > bounds[1]
