@@ -3,9 +3,9 @@
 a basic 2D physics engine, made for educational purposes.
 
 currently "done":
-- [ ] circles
-- [ ] rectangles
-- [ ] wall collision
+- [x] circles
+- [x] rectangles
+- [x] wall collision
 
 TODO (for now):
 - [ ] fix wall collision bugs
