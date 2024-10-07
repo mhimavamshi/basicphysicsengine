@@ -11,11 +11,11 @@ pygame.init()
 
 
 WIDTH, HEIGHT = 1000, 1000
-pygame.display.set_caption("CirclesAndRectangles")
+pygame.display.set_caption("Circles And Rectangles")
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 BACKGROUND_COLOR = "black"
 CMASS_PER_AREA = 3
-RMASS_PER_AREA = 3
+RMASS_PER_AREA = 25
 NUMBER_OF_CIRCLES = 30
 NUMBER_OF_RECTS = 30
 
