@@ -15,6 +15,7 @@ TODO (for now):
 - [ ] circle and rectangle collision
 - [ ] polygons
 - [ ] generalize collision between shapes
+- [ ] rotations
 - [ ] springs
 - [ ] include "soft" bodies too (compression, deformation, potential energy etc) 
 
