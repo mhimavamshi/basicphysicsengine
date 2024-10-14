@@ -5,7 +5,7 @@ import pygame
 # refactor later
 class PhysicsObject:
     # def __init__(self, position: Vector, mass: float, velocity: Vector = Vector(0, 0), acceleration: Vector = Vector(0, 0)):
-    def __init__(self, position: Vector, mass: float, force: Vector = Vector(0, 0)):
+    def __init__(self, position: Vector, mass: float, bounds: tuple, force: Vector = Vector(0, 0)):
         self.mass = mass
         self.position = position
         self.velocity = Vector(0, 0)
@@ -16,6 +16,7 @@ class PhysicsObject:
         self.forces = [self.force]
         self.name = "PhysicsObject"
         self.id = -1
+        self.bounds = bounds
 
     def __str__(self):
         return f"NAME: {self.name} ID: {self.id}"
@@ -29,9 +30,11 @@ class PhysicsObject:
         self.acceleration = self.acceleration.scale(-1)
         self.velocity = self.velocity.scale(-1)
 
+        # applying a reverse force
+        # self.apply_force(self.position.scale(-1).scale(10000))
+
     @abstractmethod
     def update(self, delta_time: float):
-        # self.acceleration = Vector(0, 0)
 
         if self.forces:
             for force in self.forces:
@@ -42,16 +45,26 @@ class PhysicsObject:
         self.position += self.velocity.scale(delta_time)   
         self.momentum = self.velocity.scale(self.mass)
 
+        # Clip the position if out of bounds
+        if self.is_out_of_bounds():
+            self.correct_bounds() # make it smoother or atleast avoid recheck maybe?
+            # or replace it with a wall collisiom?
+            self.reverse_direction()
+
     @abstractmethod
     def draw(self, screen: pygame.Surface):
         pass
 
     @abstractmethod
-    def is_out_of_bounds(self, bounds: tuple) -> bool:
+    def is_out_of_bounds(self) -> bool:
         pass
 
     @abstractmethod
     def correct_bounds(self) -> bool:
+        pass
+
+    @abstractmethod
+    def is_colliding_with(self, object) -> bool:
         pass
 
     # def add_acceleration(self, acceleration: Vector):
@@ -62,13 +75,13 @@ class PhysicsObject:
 
 
 class Circle(PhysicsObject):
-    def __init__(self, position: Vector, mass: float, radius: float, color: str = "black"):
-        super().__init__(position, mass)
+    def __init__(self, position: Vector, mass: float, radius: float, bounds:tuple, color: str = "black"):
+        super().__init__(position, mass, bounds=bounds)
         self.name = "Circle"
         self.radius = radius
         self.color = color
 
-        self.bound_calc_cache = [0, 0, 0, 0]
+        # self.bound_calc_cache = [0, 0, 0, 0]
 
     def draw(self, screen: pygame.Surface):
         pygame.draw.circle(screen, self.color, self.position.to_pygamevec(), self.radius)
@@ -76,24 +89,30 @@ class Circle(PhysicsObject):
     # def __str__(self):
     #     return super().__str__()
 
-    # def correct_bounds(self) -> bool:
-    #     if self.bound_calc_cache[0]:
-    #         self.position.x -= self.radius
-    #     if self.bound_calc_cache[1]:
-    #         self.position.y -= self.radius
-    #     if self.bound_calc_cache[2]:
-    #         self.position.x += self.radius
-    #     if self.bound_calc_cache[3]:
-    #         self.position.y += self.radius
+    def correct_bounds(self) -> bool:
+        if self.bound_calc_cache[0]:
+            self.position.x -= self.radius - 1
+        if self.bound_calc_cache[1]:
+            self.position.y -= self.radius - 1
+        if self.bound_calc_cache[2]:
+            self.position.x += self.radius - 1
+        if self.bound_calc_cache[3]: 
+            self.position.y += self.radius - 1
     
-    def is_out_of_bounds(self, bounds: tuple) -> bool:
-        # greater_x_out = self.position.x > bounds[0] - self.radius 
-        # greater_y_out = self.position.y > bounds[1] - self.radius 
-        # lesser_x_out = self.position.x < self.radius 
-        # lesser_y_out = self.position.y < self.radius 
-        # self.bound_calc_cache = [greater_x_out, greater_y_out, lesser_x_out, lesser_y_out]
-        # return any(self.bound_calc_cache)
-        return self.position.x >= bounds[0] - self.radius or self.position.y >= bounds[1] - self.radius or self.position.x <= self.radius or self.position.y <= self.radius 
+    def is_out_of_bounds(self) -> bool:
+        greater_x_out = self.position.x > self.bounds[0] - self.radius 
+        greater_y_out = self.position.y > self.bounds[1] - self.radius 
+        lesser_x_out = self.position.x < self.radius 
+        lesser_y_out = self.position.y < self.radius 
+        self.bound_calc_cache = [greater_x_out, greater_y_out, lesser_x_out, lesser_y_out]
+        return any(self.bound_calc_cache)
+        # return self.position.x > self.bounds[0] - self.radius or self.position.y > self.bounds[1] - self.radius or self.position.x < self.radius or self.position.y < self.radius 
+
+    # TODO: generalize for all shapes
+    # for now only another circle
+    def is_colliding_with(self, object) -> bool:
+        return self.position.distance_to(object.position) <= self.radius + object.radius
+
 
 
 class Rectangle(PhysicsObject):

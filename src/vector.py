@@ -28,6 +28,10 @@ class Vector:
 
     def __str__(self):
         return f"Vector: {self.direction}"
+    
+    def dot(self, vector) -> float:
+        return self.x * vector.x + self.y * vector.y
+
 
 class RandomVector(Vector):
     def __init__(self, x_bounds: tuple, y_bounds: tuple):
