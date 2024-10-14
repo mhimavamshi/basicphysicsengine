@@ -30,7 +30,7 @@ for i in range(NUMBER_OF_RECTS):
     RECT_HEIGHT = random.randint(4, 8)
     area = RECT_WIDTH * RECT_HEIGHT
     mass = MASS_PER_AREA * area
-    rectangle = Rectangle(Vector(WIDTH / 2, HEIGHT / 2), 5, (50, 50), random.choice(color_list))
+    rectangle = Rectangle(Vector(WIDTH / 2, HEIGHT / 2), 10, (50, 50), random.choice(color_list))
     rectangle.apply_force(RandomVector((-5, 10),  (-10, 5)).scale(mass))
     physics_engine.register(rectangle)
 

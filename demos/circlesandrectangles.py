@@ -10,7 +10,7 @@ import math
 pygame.init()
 
 
-WIDTH, HEIGHT = 1000, 1000
+WIDTH, HEIGHT = 1000, 860
 pygame.display.set_caption("Circles And Rectangles")
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 BACKGROUND_COLOR = "black"
