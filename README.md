@@ -10,7 +10,7 @@ currently "done":
 TODO (for now):
 - [ ] fix wall collision bugs
 - [ ] newton's gravity (force)
-- [ ] circle collision
+- [X] circle collision
 - [ ] rectangle collision
 - [ ] circle and rectangle collision
 - [ ] polygons
